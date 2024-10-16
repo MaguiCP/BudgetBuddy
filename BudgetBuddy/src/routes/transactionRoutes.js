@@ -1,10 +1,10 @@
 import express from 'express';
 import { listTransactions, createTransaction } from '../controllers/transactionController.js';
-import authMiddleware from '../middlewares/authMiddleware.js';
+import userMiddleware from '../middlewares/userMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', authMiddleware, listTransactions); 
-router.post('/', authMiddleware, createTransaction); 
+router.get('/', userMiddleware, listTransactions); 
+router.post('/', userMiddleware, createTransaction); 
 
 export default router;
