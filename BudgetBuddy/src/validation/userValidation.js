@@ -53,13 +53,14 @@ const userLoginSchema = Joi.object({
 });
 
 const userIdSchema = Joi.object({
-  id: Joi.string()
+  id: Joi.number()
     .required()
     .messages({
-      'string.empty': 'ID is required.',
+      'number.base': 'ID must be a number.',
       'any.required': 'ID is required.',
     }),
 });
+
 
 export const validateUserRegistration = async (data) => {
   return await userRegistrationSchema.validateAsync(data);
