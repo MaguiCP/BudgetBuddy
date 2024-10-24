@@ -10,7 +10,7 @@ const registerUser = async (req, res) => {
     addUser(newUser);
     return res.status(201).json({ message: 'User registered successfully!', user: newUser });
   } catch (error) {
-    const message = error.details && error.details[0] ? error.details[0].message : 'Validation error';
+    const message = error.details && error.details[0] ? error.details[0].message : 'Validation error.';
     return res.status(400).json({ message });
   }
 };
@@ -33,32 +33,30 @@ const loginUser = async (req, res) => {
 
 const updateUserDetails = async (req, res) => {
   try {
-    const { id } = await validateUserId(req.params);  // Validar o ID
-    const existingUser = getUsers().find(u => u.id == id);  // Buscar o usuário existente
+    const { id } = await validateUserId(req.params); 
+    const existingUser = getUsers().find(u => u.id == id);  
 
     if (!existingUser) {
       return res.status(404).json({ message: 'User not found.' });
     }
 
-    // Mesclar os dados antigos com os novos (campos que vêm no body da requisição)
     const updatedUser = {
-      ...existingUser,  // Manter os campos antigos
-      ...req.body       // Sobrescrever apenas os campos enviados
+      ...existingUser, 
+      ...req.body 
     };
 
-    // Log para verificar os dados a serem atualizados
     console.log('Dados a serem atualizados:', updatedUser);
 
-    const user = updateUser(id, updatedUser);  // Atualizar o usuário com os dados combinados
+    const user = updateUser(id, updatedUser);
 
     if (!user) {
-      return res.status(500).json({ message: 'Error updating user.' });  // Caso algo dê errado
+      return res.status(500).json({ message: 'Error updating user.' });
     }
 
     return res.status(200).json({ message: 'User updated successfully!', user });
   } catch (error) {
-    console.error('Erro ao atualizar utilizador:', error);  // Log do erro para depuração
-    return res.status(400).json({ message: error.details && error.details[0] ? error.details[0].message : 'Validation error' });
+    console.error('Erro ao atualizar utilizador:', error);
+    return res.status(400).json({ message: error.details && error.details[0] ? error.details[0].message : 'Validation error.' });
   }
 };
 
@@ -66,4 +64,17 @@ const getAllUsers = (req, res) => {
   return res.status(200).json(getUsers());
 };
 
-export { registerUser, loginUser, updateUserDetails, getAllUsers };
+const deleteUser = (req, res) => {
+  const { id } = req.params;
+  const users = getUsers();
+  const userIndex = users.findIndex(user => user.id === Number(id));
+
+  if (userIndex === -1) {
+    return res.status(404).json({ message: 'User not found.' });
+  }
+
+  users.splice(userIndex, 1);
+  return res.status(200).json({ message: 'User deleted successfully.' });
+};
+
+export { registerUser, loginUser, updateUserDetails, getAllUsers, deleteUser };
