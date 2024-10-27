@@ -45,8 +45,6 @@ const updateUserDetails = async (req, res) => {
       ...req.body 
     };
 
-    console.log('Dados a serem atualizados:', updatedUser);
-
     const user = updateUser(id, updatedUser);
 
     if (!user) {
@@ -77,4 +75,16 @@ const deleteUser = (req, res) => {
   return res.status(200).json({ message: 'User deleted successfully.' });
 };
 
-export { registerUser, loginUser, updateUserDetails, getAllUsers, deleteUser };
+const getUser = (req, res) => {
+  const { id } = req.params;
+  const users = getUsers();
+  const userIndex = users.findIndex(user => user.id === Number(id));
+
+  if (userIndex === -1) {
+    return res.status(404).json({ message: 'User not found.' });
+  }
+
+  return res.status(200).json({users});
+};
+
+export { registerUser, loginUser, updateUserDetails, getAllUsers, deleteUser, getUser };
