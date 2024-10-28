@@ -1,4 +1,4 @@
-import Transaction, { addTransaction, getTransactions } from '../models/Transaction.js';
+import Transaction, { addTransaction, getTransactions, updateTransaction } from '../models/Transaction.js';
 import { validateTransaction, validateTransactionId } from '../validation/transactionValidation.js';
 
 const getAllTransactions = (req, res) => {
@@ -16,4 +16,55 @@ const createTransaction = async (req, res) => {
   }
 };
 
-export { getAllTransactions, createTransaction };
+const updateTransactionDetails = async (req, res) => {
+  try {
+    const { id } = await validateTransactionId(req.params);
+    const existingTransaction = getTransactions().find(u => u.id == id);
+
+    if (!existingTransaction) {
+      return res.status(404).json({ message: 'Transaction not found.' });
+    }
+
+    const updatedTransaction = {
+      ...existingTransaction,
+      ...req.body
+    };
+
+    const transaction = updateTransaction(id, updatedTransaction);
+
+    if (!transaction) {
+      return res.status(500).json({ message: 'Error updating transaction.' });
+    }
+
+    return res.status(200).json({ message: 'Transaction updated successfully!', transaction });
+  } catch (error) {
+    return res.status(400).json({ message: error.details[0].message });
+  }
+};
+
+const getTransaction = (req, res) => {
+  const { id } = req.params;
+  const transactions = getTransactions();
+  const transactionIndex = transactions.findIndex(transaction => transaction.id === Number(id));
+
+  if (transactionIndex === -1) {
+    return res.status(404).json({ message: 'Transaction not found.' });
+  }
+
+  return res.status(200).json({ transactions });
+};
+
+const deleteTransaction = (req, res) => {
+  const { id } = req.params;
+  const transactions = getTransactions();
+  const transactionIndex = transactions.findIndex(transaction => transaction.id === Number(id));
+
+  if (transactionIndex === -1) {
+    return res.status(404).json({ message: 'Transaction not found.' });
+  }
+
+  transactions.splice(transactionIndex, 1);
+  return res.status(200).json({ message: 'Transaction deleted successfully!' });
+};
+
+export { getAllTransactions, createTransaction, updateTransactionDetails, getTransaction, deleteTransaction };
