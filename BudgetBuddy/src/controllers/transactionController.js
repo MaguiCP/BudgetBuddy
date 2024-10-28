@@ -1,19 +1,19 @@
-import transactionSchema from '../validation/transactionValidation.js';
+import Transaction, { addTransaction, getTransactions } from '../models/Transaction.js';
+import { validateTransaction, validateTransactionId } from '../validation/transactionValidation.js';
 
-let transactions = [];
-
-const listTransactions = (req, res) => {
-  res.json(transactions);
+const getAllTransactions = (req, res) => {
+  return res.status(200).json(getTransactions());
 };
 
 const createTransaction = async (req, res) => {
   try {
-    const value = await transactionSchema.validateAsync(req.body);
-    transactions.push(value);
-    return res.status(201).json({ message: 'Transaction created successfully!', transaction: value });
+    const transactionData = await validateTransaction(req.body);
+    const newTransaction = new Transaction(transactionData.description, transactionData.amount);
+    addTransaction(newTransaction);
+    return res.status(201).json({ message: 'Transaction created successfully!', transaction: newTransaction });
   } catch (error) {
     return res.status(400).json({ message: error.details[0].message });
   }
 };
 
-export { listTransactions, createTransaction };
+export { getAllTransactions, createTransaction };

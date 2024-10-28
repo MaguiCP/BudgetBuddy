@@ -10,7 +10,7 @@ const app = express();
 app.use(bodyParser.json());
 
 app.use('/api/user', userRoutes);
-app.use('/api/transactions', transactionRoutes);
+app.use('/api/transaction', transactionRoutes);
 
 const port = process.env.PORT || 8080;
 app.listen(port, () => {

@@ -1,9 +1,34 @@
 class Transaction {
-    constructor(description, amount) {
-      this.description = description;
-      this.amount = amount;
-    }
+  constructor(description, amount) {
+    this.id = Transaction.generateId();
+    this.description = description;
+    this.amount = amount;
   }
-  
-  export default Transaction;
-  
+
+  static generateId() {
+    return Math.floor(Math.random() * 1000000);
+  }
+}
+
+let transactions = [];
+
+export const addTransaction = (transaction) => {
+  transactions.push(transaction);
+};
+
+export const findTransactionById = (id) => {
+  return transactions.find(transaction => transaction.id === id);
+};
+
+export const updateTransaction = (id, updatedTransaction) => {
+  const index = transactions.findIndex(transaction => transaction.id === id);
+  if (index !== -1) {
+    transactions[index] = { ...transactions[index], ...updatedTransaction };
+    return transactions[index];
+  }
+  return null;
+};
+
+export const getTransactions = () => transactions;
+
+export default Transaction;

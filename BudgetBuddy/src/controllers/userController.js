@@ -1,7 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { validateUserRegistration, validateUserLogin, validateUserId } from '../validation/userValidation.js';
-import { addUser, updateUser, getUsers } from '../models/User.js';
-import User from '../models/User.js';
+import User, { addUser, updateUser, getUsers } from '../models/User.js';
 
 const registerUser = async (req, res) => {
   try {
@@ -10,8 +9,7 @@ const registerUser = async (req, res) => {
     addUser(newUser);
     return res.status(201).json({ message: 'User registered successfully!', user: newUser });
   } catch (error) {
-    const message = error.details && error.details[0] ? error.details[0].message : 'Validation error.';
-    return res.status(400).json({ message });
+    return res.status(400).json({ message: error.details[0].message });
   }
 };
 
@@ -33,16 +31,16 @@ const loginUser = async (req, res) => {
 
 const updateUserDetails = async (req, res) => {
   try {
-    const { id } = await validateUserId(req.params); 
-    const existingUser = getUsers().find(u => u.id == id);  
+    const { id } = await validateUserId(req.params);
+    const existingUser = getUsers().find(u => u.id == id);
 
     if (!existingUser) {
       return res.status(404).json({ message: 'User not found.' });
     }
 
     const updatedUser = {
-      ...existingUser, 
-      ...req.body 
+      ...existingUser,
+      ...req.body
     };
 
     const user = updateUser(id, updatedUser);
@@ -53,8 +51,7 @@ const updateUserDetails = async (req, res) => {
 
     return res.status(200).json({ message: 'User updated successfully!', user });
   } catch (error) {
-    console.error('Erro ao atualizar utilizador:', error);
-    return res.status(400).json({ message: error.details && error.details[0] ? error.details[0].message : 'Validation error.' });
+    return res.status(400).json({ message: error.details[0].message });
   }
 };
 
@@ -72,7 +69,7 @@ const deleteUser = (req, res) => {
   }
 
   users.splice(userIndex, 1);
-  return res.status(200).json({ message: 'User deleted successfully.' });
+  return res.status(200).json({ message: 'User deleted successfully!' });
 };
 
 const getUser = (req, res) => {
@@ -84,7 +81,7 @@ const getUser = (req, res) => {
     return res.status(404).json({ message: 'User not found.' });
   }
 
-  return res.status(200).json({users});
+  return res.status(200).json({ users });
 };
 
 export { registerUser, loginUser, updateUserDetails, getAllUsers, deleteUser, getUser };

@@ -61,7 +61,6 @@ const userIdSchema = Joi.object({
     }),
 });
 
-
 export const validateUserRegistration = async (data) => {
   return await userRegistrationSchema.validateAsync(data);
 };
