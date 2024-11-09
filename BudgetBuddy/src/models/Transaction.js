@@ -3,6 +3,7 @@ class Transaction {
     this.id = Transaction.generateId();
     this.description = description;
     this.amount = amount;
+    this.type = amount >= 0 ? 'income' : 'expense';
   }
 
   static generateId() {

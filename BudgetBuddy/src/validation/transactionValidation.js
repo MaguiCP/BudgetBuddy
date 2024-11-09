@@ -5,8 +5,7 @@ const transactionSchema = Joi.object({
     .min(3)
     .required(),
   amount: Joi.number()
-    .greater(0)
-    .required(),
+    .required()
 });
 
 const transactionIdSchema = Joi.object({
