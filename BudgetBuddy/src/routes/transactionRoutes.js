@@ -8,6 +8,8 @@ router.get('/', userMiddleware, getAllTransactions);
 router.post('/', userMiddleware, createTransaction);
 router.put('/:id', userMiddleware, updateTransactionDetails);
 router.get('/:id', getTransaction);
+router.get('/category', getFilteredTransactions);
+router.get('/report', getTransactionReport);
 router.delete('/:id', deleteTransaction);
 
 export default router;

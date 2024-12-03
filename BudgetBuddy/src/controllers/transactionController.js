@@ -67,4 +67,44 @@ const deleteTransaction = (req, res) => {
   return res.status(200).json({ message: 'Transaction deleted successfully!' });
 };
 
-export { getAllTransactions, createTransaction, updateTransactionDetails, getTransaction, deleteTransaction };
+export const getFilteredTransactions = (req, res) => {
+  const { type, category } = req.query;
+  let filteredTransactions = getTransactions();
+
+  if (type) {
+    filteredTransactions = filteredTransactions.filter(transaction => 
+      type === 'income' ? transaction.amount > 0 : transaction.amount < 0
+    );
+  }
+
+  if (category) {
+    filteredTransactions = filteredTransactions.filter(transaction => 
+      transaction.category && transaction.category.toLowerCase() === category.toLowerCase()
+    );
+  }
+
+  return res.status(200).json(filteredTransactions);
+};
+
+export const getTransactionReport = (req, res) => {
+  const transactions = getTransactions();
+
+  // Calcular receitas, despesas e saldo
+  const incomeTotal = transactions
+    .filter(transaction => transaction.amount > 0)
+    .reduce((sum, transaction) => sum + transaction.amount, 0);
+
+  const expenseTotal = transactions
+    .filter(transaction => transaction.amount < 0)
+    .reduce((sum, transaction) => sum + transaction.amount, 0);
+
+  const balance = incomeTotal + expenseTotal;
+
+  return res.status(200).json({
+    incomeTotal,
+    expenseTotal,
+    balance
+  });
+};
+
+export { getAllTransactions, createTransaction, updateTransactionDetails, getTransaction, deleteTransaction, getFilteredTransactions, getTransactionReport };
