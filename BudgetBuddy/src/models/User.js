@@ -1,14 +1,10 @@
 class User {
   constructor(username, password, email, role) {
-    this.id = User.generateId();
+    this.id = Date.now();
     this.username = username;
     this.password = password;
     this.email = email;
     this.role = role || 'user';
-  }
-
-  static generateId() {
-    return Math.floor(Math.random() * 1000000);
   }
 }
 

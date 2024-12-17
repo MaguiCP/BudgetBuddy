@@ -1,14 +1,11 @@
 class Transaction {
-  constructor(description, amount, category) {
-    this.id = Transaction.generateId();
+  constructor(description, amount, category, date = new Date()) {
+    this.id = Date.now();
     this.category = category;
     this.description = description;
     this.amount = amount;
     this.type = amount > 0 ? 'income' : 'expense';
-  }
-
-  static generateId() {
-    return Math.floor(Math.random() * 1000000);
+    this.date = date;
   }
 }
 

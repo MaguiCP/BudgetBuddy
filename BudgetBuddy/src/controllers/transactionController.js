@@ -2,7 +2,30 @@ import Transaction, { addTransaction, getTransactions, updateTransaction } from 
 import { validateTransaction, validateTransactionId } from '../validation/transactionValidation.js';
 
 const getAllTransactions = (req, res) => {
-  return res.status(200).json(getTransactions());
+  const { page = 1, limit = 10, sort = 'date' } = req.query;
+  const transactions = getTransactions();
+
+  const sortedTransactions = transactions.sort((a, b) => {
+    if (sort === 'date') {
+      return new Date(a.date) - new Date(b.date);
+    } else if (sort === 'amount') {
+      return a.amount - b.amount;
+    }
+    return 0;
+  });
+
+  const startIndex = (page - 1) * limit;
+  const endIndex = startIndex + limit;
+
+  const paginatedTransactions = sortedTransactions.slice(startIndex, endIndex);
+
+  return res.status(200).json({
+    page,
+    limit,
+    totalTransactions: transactions.length,
+    totalPages: Math.ceil(transactions.length / limit),
+    transactions: paginatedTransactions
+  });
 };
 
 const createTransaction = async (req, res) => {
