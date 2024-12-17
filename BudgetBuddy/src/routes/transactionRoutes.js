@@ -1,15 +1,15 @@
 import express from 'express';
-import { getAllTransactions, createTransaction, updateTransactionDetails, getTransaction, deleteTransaction } from '../controllers/transactionController.js';
+import { getAllTransactions, createTransaction, updateTransactionDetails, getTransaction, deleteTransaction, getFilteredTransactions, getTransactionReport } from '../controllers/transactionController.js';
 import userMiddleware from '../middlewares/userMiddleware.js';
 
 const router = express.Router();
 
 router.get('/', userMiddleware, getAllTransactions);
 router.post('/', userMiddleware, createTransaction);
+router.get('/category', userMiddleware, getFilteredTransactions);
+router.get('/report', userMiddleware, getTransactionReport);
+router.delete('/:id', userMiddleware, deleteTransaction);
 router.put('/:id', userMiddleware, updateTransactionDetails);
-router.get('/:id', getTransaction);
-router.get('/category', getFilteredTransactions);
-router.get('/report', getTransactionReport);
-router.delete('/:id', deleteTransaction);
+router.get('/:id', userMiddleware, getTransaction);
 
 export default router;

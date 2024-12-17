@@ -8,11 +8,12 @@ const getAllTransactions = (req, res) => {
 const createTransaction = async (req, res) => {
   try {
     const transactionData = await validateTransaction(req.body);
-    const newTransaction = new Transaction(transactionData.description, transactionData.amount);
+    const newTransaction = new Transaction(transactionData.description, transactionData.amount, transactionData.category);
     addTransaction(newTransaction);
     return res.status(201).json({ message: 'Transaction created successfully!', transaction: newTransaction });
   } catch (error) {
-    return res.status(400).json({ message: error.details[0].message });
+    console.log('Error:', error);
+    return res.status(400).json({ message: 'An unexpected error occurred.' });
   }
 };
 
@@ -38,7 +39,8 @@ const updateTransactionDetails = async (req, res) => {
 
     return res.status(200).json({ message: 'Transaction updated successfully!', transaction });
   } catch (error) {
-    return res.status(400).json({ message: error.details[0].message });
+    console.log('Error:', error);
+    return res.status(400).json({ message: 'An unexpected error occurred.' });
   }
 };
 
@@ -67,18 +69,18 @@ const deleteTransaction = (req, res) => {
   return res.status(200).json({ message: 'Transaction deleted successfully!' });
 };
 
-export const getFilteredTransactions = (req, res) => {
+const getFilteredTransactions = (req, res) => {
   const { type, category } = req.query;
   let filteredTransactions = getTransactions();
 
   if (type) {
-    filteredTransactions = filteredTransactions.filter(transaction => 
+    filteredTransactions = filteredTransactions.filter(transaction =>
       type === 'income' ? transaction.amount > 0 : transaction.amount < 0
     );
   }
 
   if (category) {
-    filteredTransactions = filteredTransactions.filter(transaction => 
+    filteredTransactions = filteredTransactions.filter(transaction =>
       transaction.category && transaction.category.toLowerCase() === category.toLowerCase()
     );
   }
@@ -86,10 +88,9 @@ export const getFilteredTransactions = (req, res) => {
   return res.status(200).json(filteredTransactions);
 };
 
-export const getTransactionReport = (req, res) => {
+const getTransactionReport = (req, res) => {
   const transactions = getTransactions();
 
-  // Calcular receitas, despesas e saldo
   const incomeTotal = transactions
     .filter(transaction => transaction.amount > 0)
     .reduce((sum, transaction) => sum + transaction.amount, 0);

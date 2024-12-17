@@ -1,10 +1,10 @@
 class Transaction {
-  constructor(description, amount) {
+  constructor(description, amount, category) {
     this.id = Transaction.generateId();
     this.category = category;
     this.description = description;
     this.amount = amount;
-    this.type = amount >= 0 ? 'income' : 'expense';
+    this.type = amount > 0 ? 'income' : 'expense';
   }
 
   static generateId() {

@@ -9,7 +9,8 @@ const registerUser = async (req, res) => {
     addUser(newUser);
     return res.status(201).json({ message: 'User registered successfully!', user: newUser });
   } catch (error) {
-    return res.status(400).json({ message: error.details[0].message });
+    console.log('Error:', error);
+    return res.status(400).json({ message: 'An unexpected error occurred.' });
   }
 };
 
@@ -25,7 +26,8 @@ const loginUser = async (req, res) => {
     const token = jwt.sign({ username: user.username, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
     return res.status(200).json({ token });
   } catch (error) {
-    return res.status(400).json({ message: error.details[0].message });
+    console.log('Error:', error);
+    return res.status(400).json({ message: 'An unexpected error occurred.' });
   }
 };
 
@@ -51,7 +53,8 @@ const updateUserDetails = async (req, res) => {
 
     return res.status(200).json({ message: 'User updated successfully!', user });
   } catch (error) {
-    return res.status(400).json({ message: error.details[0].message });
+    console.log('Error:', error);
+    return res.status(400).json({ message: 'An unexpected error occurred.' });
   }
 };
 
