@@ -17,7 +17,7 @@ const transactionSchema = Joi.object({
       'number.base': 'Amount must be a number.',
       'any.required': 'Amount is required.',
     }),
-    category: Joi.string()
+  category: Joi.string()
     .valid(...allowedCategories)
     .required()
     .messages({

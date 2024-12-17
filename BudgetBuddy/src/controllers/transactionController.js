@@ -131,4 +131,47 @@ const getTransactionReport = (req, res) => {
   });
 };
 
-export { getAllTransactions, createTransaction, updateTransactionDetails, getTransaction, deleteTransaction, getFilteredTransactions, getTransactionReport };
+const getTransactionReportByPeriod = (req, res) => {
+  const { interval = 'monthly' } = req.query;
+  const transactions = getTransactions();
+
+  const formatDate = (date, interval) => {
+    const d = new Date(date);
+    if (interval === 'daily') {
+      return d.toISOString().split('T')[0];
+    } else if (interval === 'weekly') {
+      const startOfYear = new Date(d.getFullYear(), 0, 1);
+      const weekNumber = Math.ceil((((d - startOfYear) / 86400000) + 1) / 7);
+      return `${d.getFullYear()}-W${weekNumber}`;
+    } else {
+      return `${d.getFullYear()}-${d.getMonth() + 1}`;
+    }
+  };
+
+  const balancePerPeriod = transactions.reduce((acc, transaction) => {
+    const period = formatDate(transaction.date, interval);
+
+    if (!acc[period]) {
+      acc[period] = { incomeTotal: 0, expenseTotal: 0, balance: 0 };
+    }
+
+    if (transaction.amount > 0) {
+      acc[period].incomeTotal += transaction.amount;
+    } else {
+      acc[period].expenseTotal += transaction.amount;
+    }
+
+    acc[period].balance = acc[period].incomeTotal + acc[period].expenseTotal;
+
+    return acc;
+  }, {});
+
+  const result = Object.keys(balancePerPeriod).map(period => ({
+    period,
+    ...balancePerPeriod[period],
+  }));
+
+  return res.status(200).json(result);
+};
+
+export { getAllTransactions, createTransaction, updateTransactionDetails, getTransaction, deleteTransaction, getFilteredTransactions, getTransactionReport, getTransactionReportByPeriod };
