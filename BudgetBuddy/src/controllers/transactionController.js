@@ -112,26 +112,6 @@ const getFilteredTransactions = (req, res) => {
 };
 
 const getTransactionReport = (req, res) => {
-  const transactions = getTransactions();
-
-  const incomeTotal = transactions
-    .filter(transaction => transaction.amount > 0)
-    .reduce((sum, transaction) => sum + transaction.amount, 0);
-
-  const expenseTotal = transactions
-    .filter(transaction => transaction.amount < 0)
-    .reduce((sum, transaction) => sum + transaction.amount, 0);
-
-  const balance = incomeTotal + expenseTotal;
-
-  return res.status(200).json({
-    incomeTotal,
-    expenseTotal,
-    balance
-  });
-};
-
-const getTransactionReportByPeriod = (req, res) => {
   const { interval = 'monthly' } = req.query;
   const transactions = getTransactions();
 
@@ -174,4 +154,4 @@ const getTransactionReportByPeriod = (req, res) => {
   return res.status(200).json(result);
 };
 
-export { getAllTransactions, createTransaction, updateTransactionDetails, getTransaction, deleteTransaction, getFilteredTransactions, getTransactionReport, getTransactionReportByPeriod };
+export { getAllTransactions, createTransaction, updateTransactionDetails, getTransaction, deleteTransaction, getFilteredTransactions, getTransactionReport };
