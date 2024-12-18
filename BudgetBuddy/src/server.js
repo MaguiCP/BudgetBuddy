@@ -12,7 +12,4 @@ app.use(bodyParser.json());
 app.use('/api/user', userRoutes);
 app.use('/api/transaction', transactionRoutes);
 
-const port = process.env.PORT;
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+export default app;
