@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import "../styles/register.css";
 
 function Register() {
   const [username, setUsername] = useState("");
@@ -19,18 +20,18 @@ function Register() {
         email,
       });
       alert("User registered successfully!");
-      navigate.push("/login");
+      navigate("/login");
     } catch (err) {
       setError("Invalid credentials.");
     }
   };
 
   return (
-    <div>
+    <div className="register-container">
       <h2>Register</h2>
-      {error && <p>{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div>
+      {error && <p className="error-message">{error}</p>}
+      <form onSubmit={handleSubmit} className="register-form">
+        <div className="form-group">
           <label>Username:</label>
           <input
             type="text"
@@ -39,16 +40,7 @@ function Register() {
             required
           />
         </div>
-        <div>
-          <label>Email:</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <div>
+        <div className="form-group">
           <label>Password:</label>
           <input
             type="password"
@@ -57,7 +49,16 @@ function Register() {
             required
           />
         </div>
-        <button type="submit">Register</button>
+        <div className="form-group">
+          <label>Email:</label>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
+        <button type="submit" className="register-button">Register</button>
       </form>
     </div>
   );

@@ -4,17 +4,22 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Login from "./components/Login";
 import Register from "./components/Register";
 import Home from "./components/Home";
+import "./styles/global.css";
 
 function App() {
   return (
     <Router>
       <div>
-        <nav>
-          <Link to="/">Home</Link> |
-          <Link to="/login">Login</Link> |
-          <Link to="/register">Register</Link>
+        {/* Barra de Navegação */}
+        <nav className="navbar">
+          <ul className="navbar-links">
+            <li><Link to="/" className="navbar-link">Home</Link></li>
+            <li><Link to="/login" className="navbar-link">Login</Link></li>
+            <li><Link to="/register" className="navbar-link">Register</Link></li>
+          </ul>
         </nav>
 
+        {/* Rotas da Aplicação */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
