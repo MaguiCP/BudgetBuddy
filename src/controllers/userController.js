@@ -9,8 +9,7 @@ const registerUser = async (req, res) => {
     addUser(newUser);
     return res.status(201).json({ message: 'User registered successfully!', user: newUser });
   } catch (error) {
-    console.log('Error:', error);
-    return res.status(400).json({ message: 'An unexpected error occurred.' });
+    return res.status(400).json({ error: error.message });
   }
 };
 
@@ -20,14 +19,13 @@ const loginUser = async (req, res) => {
     const user = getUsers().find(u => u.username === username && u.password === password);
 
     if (!user) {
-      return res.status(401).json({ message: 'Invalid credentials.' });
+      return res.status(401).json({ error: 'Invalid credentials.' });
     }
 
     const token = jwt.sign({ username: user.username, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1h' });
     return res.status(200).json({ token });
   } catch (error) {
-    console.log('Error:', error);
-    return res.status(400).json({ message: 'An unexpected error occurred.' });
+    return res.status(400).json({ error: error.message });
   }
 };
 
@@ -37,7 +35,7 @@ const updateUserDetails = async (req, res) => {
     const existingUser = getUsers().find(u => u.id == id);
 
     if (!existingUser) {
-      return res.status(404).json({ message: 'User not found.' });
+      return res.status(404).json({ error: 'User not found.' });
     }
 
     const updatedUser = {
@@ -48,13 +46,12 @@ const updateUserDetails = async (req, res) => {
     const user = updateUser(id, updatedUser);
 
     if (!user) {
-      return res.status(500).json({ message: 'Error updating user.' });
+      return res.status(500).json({ error: 'Error updating user.' });
     }
 
     return res.status(200).json({ message: 'User updated successfully!', user });
   } catch (error) {
-    console.log('Error:', error);
-    return res.status(400).json({ message: 'An unexpected error occurred.' });
+    return res.status(400).json({ error: error.message });
   }
 };
 
@@ -68,7 +65,7 @@ const deleteUser = (req, res) => {
   const userIndex = users.findIndex(user => user.id === Number(id));
 
   if (userIndex === -1) {
-    return res.status(404).json({ message: 'User not found.' });
+    return res.status(404).json({ error: 'User not found.' });
   }
 
   users.splice(userIndex, 1);
@@ -81,7 +78,7 @@ const getUser = (req, res) => {
   const userIndex = users.findIndex(user => user.id === Number(id));
 
   if (userIndex === -1) {
-    return res.status(404).json({ message: 'User not found.' });
+    return res.status(404).json({ error: 'User not found.' });
   }
 
   return res.status(200).json({ users });

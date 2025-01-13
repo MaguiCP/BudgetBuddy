@@ -17,7 +17,11 @@ function Login() {
       localStorage.setItem("token", response.data.token);
       alert("Login successful!");
     } catch (err) {
-      setError("Invalid credentials.");
+      if (err.response && err.response.data && err.response.data.error) {
+        setError(err.response.data.error);
+      } else {
+        setError("An unexpected error occurred.");
+      }
     }
   };
 
