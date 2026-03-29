@@ -21,16 +21,16 @@ app.use(cors({ origin: 'http://localhost:3000' }));
 
 app.use(bodyParser.json());
 
+// Limiter global para todas as requisições
+app.use(defaultLimiter);
+
 // API Routes
 app.use('/api/user', userRoutes);
 app.use('/api/transaction', transactionRoutes);
 
 // Frontend
-const __dirname = path.resolve();
-
 app.use(express.static(path.join(__dirname, 'frontend/build')));
-
-app.get('*', defaultLimiter, (req, res) => {
+app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'frontend/build/index.html'));
 });
 
