@@ -5,11 +5,13 @@ import path from 'path';
 import cors from 'cors';  // Importando o CORS
 import userRoutes from './routes/userRoutes.js';
 import transactionRoutes from './routes/transactionRoutes.js';
+import categoryRoutes from './routes/categoryRoutes.js';
 import rateLimit from 'express-rate-limit';
 
 dotenv.config();
 
 const app = express();
+const frontendBuildPath = path.resolve(process.cwd(), '../frontend/build');
 
 const defaultLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -26,12 +28,13 @@ app.use(defaultLimiter);
 
 // API Routes
 app.use('/api/user', userRoutes);
+app.use('/api/category', categoryRoutes);
 app.use('/api/transaction', transactionRoutes);
 
 // Frontend
-app.use(express.static(path.join(__dirname, 'frontend/build')));
+app.use(express.static(frontendBuildPath));
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'frontend/build/index.html'));
+  res.sendFile(path.join(frontendBuildPath, 'index.html'));
 });
 
 export default app;
