@@ -1,32 +1,28 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import "../styles/register.css";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
+import '../styles/register.css';
 
 function Register() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [email, setEmail] = useState("");
-  const [error, setError] = useState("");
-
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState('');
+  const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
     try {
-      await axios.post("http://localhost:8080/api/user", {
+      await api.post('/user', {
         username,
         password,
         email,
       });
-      alert("User registered successfully!");
-      navigate("/login");
+
+      navigate('/login');
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error) {
-        setError(err.response.data.error);
-      } else {
-        setError("An unexpected error occurred.");
-      }
+      setError(err.response?.data?.error || 'An unexpected error occurred.');
     }
   };
 
@@ -40,7 +36,7 @@ function Register() {
           <input
             type="text"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(event) => setUsername(event.target.value)}
             required
           />
         </div>
@@ -49,7 +45,7 @@ function Register() {
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(event) => setPassword(event.target.value)}
             required
           />
         </div>
@@ -58,7 +54,7 @@ function Register() {
           <input
             type="email"
             value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={(event) => setEmail(event.target.value)}
             required
           />
         </div>

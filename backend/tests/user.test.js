@@ -11,6 +11,17 @@ describe('User API', () => {
     server = http.createServer(app);
     await new Promise((resolve) => server.listen(resolve));
 
+    const registerResponse = await request(server)
+      .post('/api/user')
+      .send({
+        username: 'testuser',
+        password: 'testpassword',
+        email: 'testuser@example.com',
+        role: 'user',
+      });
+
+    expect(registerResponse.status).toBe(201);
+
     const loginResponse = await request(server)
       .post('/api/user/login')
       .send({
@@ -18,6 +29,7 @@ describe('User API', () => {
         password: 'testpassword',
       });
 
+    expect(loginResponse.status).toBe(200);
     token = loginResponse.body.token;
   });
 
@@ -27,10 +39,10 @@ describe('User API', () => {
 
   it('Should register a new User', async () => {
     const userData = {
-      username: "testuser",
-      password: "testpassword",
-      email: "test@example.com",
-      role: "user"
+      username: 'testuserregister',
+      password: 'testpassword',
+      email: 'testregister@example.com',
+      role: 'user',
     };
 
     const response = await request(server)
@@ -39,6 +51,7 @@ describe('User API', () => {
 
     expect(response.status).toBe(201);
     expect(response.body.message).toBe('User registered successfully!');
+    expect(response.body.user.password).toBeUndefined();
     userId = response.body.user.id;
   });
 
@@ -57,13 +70,12 @@ describe('User API', () => {
   });
 
   it('Should get User details', async () => {
-
     const response = await request(server)
       .get(`/api/user/${userId}`)
       .set('Authorization', `Bearer ${token}`);
 
     expect(response.status).toBe(200);
-    expect(response.body.users).toBeDefined();
+    expect(response.body.user).toBeDefined();
   });
 
   it('Should delete a User', async () => {

@@ -1,12 +1,145 @@
-@import url('https://fonts.googleapis.com/css2?family=Josefin+Sans:ital,wght@0,100..700;1,100..700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #f3f6ff;
+  --panel: #ffffff;
+  --primary: #5d6cff;
+  --primary-dark: #4957f0;
+  --text: #1d1d2f;
+  --muted: #687089;
+  --border: #e7ebf7;
+  --success: #1aa66c;
+  --danger: #d95f5f;
+  --shadow: 0 12px 30px rgba(26, 32, 79, 0.08);
+}
 
 * {
-    font-family: "Josefin Sans", serif;
-    font-weight: 400;
-    font-style: normal;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+html, body, #root {
+  margin: 0;
+  min-height: 100%;
+  background: linear-gradient(180deg, #f8f9ff 0%, #eef3ff 100%);
+  color: var(--text);
 }
 
 body {
-    background: linear-gradient(90deg, rgba(240, 240, 255, 1) 0%, rgba(250, 230, 255, 1) 50%, rgba(255, 240, 245, 1) 100%);
-    text-align: left;
+  min-height: 100vh;
+}
+
+button, input {
+  font: inherit;
+}
+
+.navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 18px 20px;
+}
+
+.brand {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nav-links a,
+.logout-btn {
+  text-decoration: none;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.8);
+  color: var(--text);
+  border-radius: 999px;
+  padding: 8px 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nav-links a:hover,
+.logout-btn:hover {
+  border-color: transparent;
+  background: var(--primary);
+  color: white;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.login-container,
+.register-container {
+  max-width: 480px;
+  margin: 48px auto 0;
+  background: var(--panel);
+  border-radius: 22px;
+  box-shadow: var(--shadow);
+  padding: 28px 24px;
+}
+
+.login-container h2,
+.register-container h2 {
+  margin: 0 0 22px;
+  text-align: center;
+  color: var(--text);
+}
+
+.login-form,
+.register-form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  color: var(--muted);
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.form-group input {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  background: #fafbff;
+}
+
+.login-button,
+.register-button {
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  cursor: pointer;
+  padding: 12px 18px;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.error-message {
+  margin: 0 0 16px;
+  color: var(--danger);
+  background: rgba(217, 95, 95, 0.08);
+  border: 1px solid rgba(217, 95, 95, 0.16);
+  border-radius: 10px;
+  padding: 10px 12px;
 }
