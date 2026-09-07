@@ -1,7 +1,5 @@
 import Joi from 'joi';
 
-const allowedCategories = ['groceries', 'transportation', 'entertainment', 'income', 'others'];
-
 const transactionSchema = Joi.object({
   description: Joi.string()
     .min(3)
@@ -18,12 +16,16 @@ const transactionSchema = Joi.object({
       'any.required': 'Amount is required.',
     }),
   category: Joi.string()
-    .valid(...allowedCategories)
+    .min(2)
+    .max(50)
     .required()
     .messages({
-      'any.only': `Category must be one of: ${allowedCategories.join(', ')}`,
+      'string.base': 'Category must be a string.',
+      'string.min': 'Category must be at least 2 characters long.',
+      'string.max': 'Category must not exceed 50 characters.',
       'any.required': 'Category is required.',
     }),
+  date: Joi.date().optional(),
 });
 
 const transactionIdSchema = Joi.object({

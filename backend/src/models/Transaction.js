@@ -1,11 +1,12 @@
 class Transaction {
-  constructor(description, amount, category, date = new Date()) {
-    this.id = Date.now();
+  constructor(description, amount, category, userId, date = new Date()) {
+    this.id = Date.now() + Math.floor(Math.random() * 1000);
     this.category = category;
     this.description = description;
-    this.amount = amount;
-    this.type = amount > 0 ? 'income' : 'expense';
+    this.amount = Number(amount);
+    this.type = this.amount > 0 ? 'income' : 'expense';
     this.date = date;
+    this.userId = userId;
   }
 }
 
@@ -16,11 +17,11 @@ export const addTransaction = (transaction) => {
 };
 
 export const findTransactionById = (id) => {
-  return transactions.find(transaction => transaction.id === id);
+  return transactions.find((transaction) => transaction.id === Number(id));
 };
 
 export const updateTransaction = (id, updatedTransaction) => {
-  const index = transactions.findIndex(transaction => transaction.id === id);
+  const index = transactions.findIndex((transaction) => transaction.id === Number(id));
   if (index !== -1) {
     transactions[index] = { ...transactions[index], ...updatedTransaction };
     return transactions[index];
@@ -29,5 +30,16 @@ export const updateTransaction = (id, updatedTransaction) => {
 };
 
 export const getTransactions = () => transactions;
+
+export const deleteTransactionById = (id) => {
+  const index = transactions.findIndex((transaction) => transaction.id === Number(id));
+
+  if (index === -1) {
+    return false;
+  }
+
+  transactions.splice(index, 1);
+  return true;
+};
 
 export default Transaction;
