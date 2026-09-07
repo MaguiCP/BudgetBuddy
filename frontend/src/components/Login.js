@@ -1,27 +1,29 @@
-import React, { useState } from "react";
-import axios from "axios";
-import "../styles/login.css";
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import api from '../services/api';
+import { useAuth } from '../context/AuthContext';
+import '../styles/login.css';
 
 function Login() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+  const { setToken } = useAuth();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+
     try {
-      const response = await axios.post("http://localhost:8080/api/user/login", {
+      const response = await api.post('/user/login', {
         username,
         password,
       });
-      localStorage.setItem("token", response.data.token);
-      alert("Login successful!");
+
+      setToken(response.data.token);
+      navigate('/dashboard');
     } catch (err) {
-      if (err.response && err.response.data && err.response.data.error) {
-        setError(err.response.data.error);
-      } else {
-        setError("An unexpected error occurred.");
-      }
+      setError(err.response?.data?.error || 'An unexpected error occurred.');
     }
   };
 
@@ -35,7 +37,7 @@ function Login() {
           <input
             type="text"
             value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={(event) => setUsername(event.target.value)}
             required
           />
         </div>
@@ -44,7 +46,7 @@ function Login() {
           <input
             type="password"
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(event) => setPassword(event.target.value)}
             required
           />
         </div>
