@@ -81,6 +81,7 @@
   },
   "overrides": {
     "serialize-javascript": "7.0.5",
-    "glob": "10.5.0"
+    "glob": "10.5.0",
+    "qs": "6.16.0"
   }
 }
