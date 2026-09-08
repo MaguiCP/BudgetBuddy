@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@svgr/webpack": "^8.1.0",
     "axios": "^1.18.0",
     "babel-loader": "^8.2.3",
@@ -46,7 +45,6 @@
     "tailwindcss": "^4.2.2",
     "terser-webpack-plugin": "^5.4.0",
     "webpack": "^5.105.4",
-    "webpack-dev-server": "^5.2.6",
     "webpack-manifest-plugin": "^4.0.2",
     "workbox-webpack-plugin": "^7.4.0"
   },
@@ -75,11 +73,13 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.6.3",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.3",
     "jest": "^27.5.1",
     "jest-environment-jsdom": "^27.5.1",
-    "web-vitals": "^6.2.1"
+    "web-vitals": "^6.2.1",
+    "webpack-dev-server": "^6.0.0"
   },
   "overrides": {
     "serialize-javascript": "7.0.5",
