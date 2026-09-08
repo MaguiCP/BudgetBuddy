@@ -73,13 +73,11 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
-    "@pmmmwh/react-refresh-webpack-plugin": "^0.6.3",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.3",
     "jest": "^27.5.1",
     "jest-environment-jsdom": "^27.5.1",
-    "web-vitals": "^6.2.1",
-    "webpack-dev-server": "^6.0.0"
+    "web-vitals": "^6.2.1"
   },
   "overrides": {
     "serialize-javascript": "7.0.5",
