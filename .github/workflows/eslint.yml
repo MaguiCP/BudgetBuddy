@@ -50,16 +50,6 @@ jobs:
             --output-file eslint-results.sarif
         continue-on-error: true
 
-      - name: Inspect SARIF
-        if: always()
-        run: |
-          echo "=== SARIF FILE ==="
-          ls -lh eslint-results.sarif
-          echo "=== RESULTS COUNT ==="
-          grep -o '"results"' eslint-results.sarif | wc -l
-          echo "=== SARIF CONTENT ==="
-          cat eslint-results.sarif
-
       - name: Upload ESLint results
         if: always()
         uses: github/codeql-action/upload-sarif@v4
@@ -101,16 +91,6 @@ jobs:
             --format @microsoft/eslint-formatter-sarif \
             --output-file eslint-results.sarif
         continue-on-error: true
-
-      - name: Inspect SARIF
-        if: always()
-        run: |
-          echo "=== SARIF FILE ==="
-          ls -lh eslint-results.sarif
-          echo "=== RESULTS COUNT ==="
-          grep -o '"results"' eslint-results.sarif | wc -l
-          echo "=== SARIF CONTENT ==="
-          cat eslint-results.sarif
 
       - name: Upload ESLint results
         if: always()
