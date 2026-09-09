@@ -45,7 +45,6 @@ jobs:
 
       - name: Run ESLint
         run: npx eslint . --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
-        continue-on-error: true
 
       - name: Upload ESLint results
         if: always()
@@ -83,7 +82,6 @@ jobs:
 
       - name: Run ESLint
         run: npx eslint . --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
-        continue-on-error: true
 
       - name: Upload ESLint results
         if: always()
