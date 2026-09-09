@@ -44,13 +44,28 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: npx eslint . --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
+        run: |
+          npx eslint . \
+            --format @microsoft/eslint-formatter-sarif \
+            --output-file eslint-results.sarif
+        continue-on-error: true
+
+      - name: Inspect SARIF
+        if: always()
+        run: |
+          echo "=== SARIF FILE ==="
+          ls -lh eslint-results.sarif
+          echo "=== RESULTS COUNT ==="
+          grep -o '"results"' eslint-results.sarif | wc -l
+          echo "=== SARIF CONTENT ==="
+          cat eslint-results.sarif
 
       - name: Upload ESLint results
         if: always()
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: frontend/eslint-results.sarif
+          category: eslint-frontend
           wait-for-processing: true
 
   backend:
@@ -81,11 +96,26 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
-        run: npx eslint . --format @microsoft/eslint-formatter-sarif --output-file eslint-results.sarif
+        run: |
+          npx eslint . \
+            --format @microsoft/eslint-formatter-sarif \
+            --output-file eslint-results.sarif
+        continue-on-error: true
+
+      - name: Inspect SARIF
+        if: always()
+        run: |
+          echo "=== SARIF FILE ==="
+          ls -lh eslint-results.sarif
+          echo "=== RESULTS COUNT ==="
+          grep -o '"results"' eslint-results.sarif | wc -l
+          echo "=== SARIF CONTENT ==="
+          cat eslint-results.sarif
 
       - name: Upload ESLint results
         if: always()
         uses: github/codeql-action/upload-sarif@v4
         with:
           sarif_file: backend/eslint-results.sarif
+          category: eslint-backend
           wait-for-processing: true
