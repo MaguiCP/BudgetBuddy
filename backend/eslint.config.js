@@ -3,11 +3,16 @@ import globals from 'globals';
 
 export default [
   {
-    ignores: ['node_modules/**'],
+    ignores: [
+      'node_modules/**',
+      'coverage/**',
+    ],
   },
+
   js.configs.recommended,
+
   {
-    files: ['**/*.js'],
+    files: ['src/**/*.js'],
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'module',
@@ -16,10 +21,14 @@ export default [
       },
     },
   },
+
   {
     files: ['tests/**/*.js'],
     languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       globals: {
+        ...globals.node,
         ...globals.jest,
       },
     },

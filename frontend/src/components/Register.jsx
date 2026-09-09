@@ -4,25 +4,25 @@ import api from '../services/api';
 import '../styles/register.css';
 
 function Register() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [email, setEmail] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     try {
-      await api.post('/user', {
+      await api.post("/user", {
         username,
         password,
         email,
       });
 
-      navigate('/login');
+      navigate("/login");
     } catch (err) {
-      setError(err.response?.data?.error || 'An unexpected error occurred.');
+      setError(err.response?.data?.error || "An unexpected error occurred.");
     }
   };
 
@@ -32,8 +32,9 @@ function Register() {
       {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit} className="register-form">
         <div className="form-group">
-          <label>Username:</label>
+          <label htmlFor="username">Username:</label>
           <input
+            id="username"
             type="text"
             value={username}
             onChange={(event) => setUsername(event.target.value)}
@@ -41,8 +42,9 @@ function Register() {
           />
         </div>
         <div className="form-group">
-          <label>Password:</label>
+          <label htmlFor="password">Password:</label>
           <input
+            id="password"
             type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
@@ -50,15 +52,18 @@ function Register() {
           />
         </div>
         <div className="form-group">
-          <label>Email:</label>
+          <label htmlFor="email">Email:</label>
           <input
+            id="email"
             type="email"
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             required
           />
         </div>
-        <button type="submit" className="register-button">Register</button>
+        <button type="submit" className="register-button">
+          Register
+        </button>
       </form>
     </div>
   );

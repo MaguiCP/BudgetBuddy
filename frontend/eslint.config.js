@@ -3,6 +3,7 @@ import globals from 'globals';
 
 export default [
   js.configs.recommended,
+
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -18,7 +19,19 @@ export default [
       },
     },
   },
+
   {
-    ignores: ['node_modules/**', 'dist/**'],
+    files: ['**/*.jsx'],
+    rules: {
+      'no-unused-vars': 'off',
+    },
+  },
+
+  {
+    ignores: [
+      'node_modules/**',
+      'dist/**',
+      'coverage/**',
+    ],
   },
 ];

@@ -5,9 +5,9 @@ import { useAuth } from '../context/AuthContext';
 import '../styles/login.css';
 
 function Login() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const navigate = useNavigate();
   const { setToken } = useAuth();
 
@@ -15,15 +15,15 @@ function Login() {
     event.preventDefault();
 
     try {
-      const response = await api.post('/user/login', {
+      const response = await api.post("/user/login", {
         username,
         password,
       });
 
       setToken(response.data.token);
-      navigate('/dashboard');
+      navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.error || 'An unexpected error occurred.');
+      setError(err.response?.data?.error || "An unexpected error occurred.");
     }
   };
 
@@ -33,8 +33,9 @@ function Login() {
       {error && <p className="error-message">{error}</p>}
       <form onSubmit={handleSubmit} className="login-form">
         <div className="form-group">
-          <label>Username:</label>
+          <label htmlFor="username">Username:</label>
           <input
+            id="username"
             type="text"
             value={username}
             onChange={(event) => setUsername(event.target.value)}
@@ -42,15 +43,18 @@ function Login() {
           />
         </div>
         <div className="form-group">
-          <label>Password:</label>
+          <label htmlFor="password">Password:</label>
           <input
+            id="password"
             type="password"
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             required
           />
         </div>
-        <button type="submit" className="login-button">Login</button>
+        <button type="submit" className="login-button">
+          Login
+        </button>
       </form>
     </div>
   );
