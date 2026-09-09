@@ -18,7 +18,9 @@ const sanitizeUser = (user) => {
     return null;
   }
 
-  const { password, ...safeUser } = user;
+  const safeUser = { ...user };
+  delete safeUser.password;
+
   return safeUser;
 };
 

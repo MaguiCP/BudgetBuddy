@@ -2,6 +2,9 @@ import js from '@eslint/js';
 import globals from 'globals';
 
 export default [
+  {
+    ignores: ['node_modules/**'],
+  },
   js.configs.recommended,
   {
     files: ['**/*.js'],
@@ -14,6 +17,11 @@ export default [
     },
   },
   {
-    ignores: ['node_modules/**'],
+    files: ['tests/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.jest,
+      },
+    },
   },
 ];
