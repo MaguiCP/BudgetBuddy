@@ -17,7 +17,7 @@ test('renders the BudgetBuddy app shell and authenticated nav', () => {
   expect(screen.getByText(/Log out/i)).toBeInTheDocument();
 
   // Wait for DashboardPage's asynchronous effects/state updates.
-  await screen.findByText(/Total Income|Income/i);
+  screen.findByText(/Total Income|Income/i);
 
   window.localStorage.clear();
 });
