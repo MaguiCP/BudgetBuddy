@@ -1,10 +1,10 @@
 class Transaction {
-  constructor(description, amount, category, userId, date = new Date()) {
+  constructor(description, amount, category, userId, date = new Date(), type) {
     this.id = Date.now() + Math.floor(Math.random() * 1000);
     this.category = category;
     this.description = description;
-    this.amount = Number(amount);
-    this.type = this.amount > 0 ? 'income' : 'expense';
+    this.type = type || (Number(amount) >= 0 ? 'income' : 'expense');
+    this.amount = this.type === 'expense' ? -Math.abs(Number(amount)) : Math.abs(Number(amount));
     this.date = date;
     this.userId = userId;
   }

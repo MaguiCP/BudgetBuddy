@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import api, { getApiErrorMessage } from '../services/api';
 import { useAuth } from '../context/AuthContext';
 import '../styles/login.css';
 
@@ -23,7 +23,7 @@ function Login() {
       setToken(response.data.token);
       navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.error || "An unexpected error occurred.");
+      setError(getApiErrorMessage(err, 'Não foi possível iniciar sessão. Verifica os dados e tenta novamente.'));
     }
   };
 

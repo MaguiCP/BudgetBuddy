@@ -63,7 +63,8 @@ const createTransaction = async (req, res) => {
       transactionData.amount,
       transactionData.category,
       req.user.id,
-      transactionData.date || new Date()
+      transactionData.date || new Date(),
+      transactionData.type
     );
 
     addTransaction(newTransaction);
@@ -82,9 +83,16 @@ const updateTransactionDetails = async (req, res) => {
       return res.status(404).json({ message: 'Transaction not found.' });
     }
 
+    const validatedTransaction = await validateTransaction(req.body);
+    const transactionType = validatedTransaction.type || existingTransaction.type || (Number(validatedTransaction.amount) >= 0 ? 'income' : 'expense');
+    const normalizedAmount = transactionType === 'expense'
+      ? -Math.abs(Number(validatedTransaction.amount))
+      : Math.abs(Number(validatedTransaction.amount));
     const updatedTransaction = {
       ...existingTransaction,
-      ...req.body,
+      ...validatedTransaction,
+      amount: normalizedAmount,
+      type: transactionType,
       userId: req.user.id,
     };
 
@@ -176,12 +184,12 @@ const getTransactionSummary = (req, res) => {
   }
 
   const totalIncome = userTransactions
-    .filter((transaction) => transaction.amount > 0)
-    .reduce((sum, transaction) => sum + Number(transaction.amount), 0);
+    .filter((transaction) => (transaction.type || (transaction.amount >= 0 ? 'income' : 'expense')) === 'income')
+    .reduce((sum, transaction) => sum + Math.abs(Number(transaction.amount)), 0);
 
-  const totalExpenses = Math.abs(userTransactions
-    .filter((transaction) => transaction.amount < 0)
-    .reduce((sum, transaction) => sum + Number(transaction.amount), 0));
+  const totalExpenses = userTransactions
+    .filter((transaction) => (transaction.type || (transaction.amount >= 0 ? 'income' : 'expense')) === 'expense')
+    .reduce((sum, transaction) => sum + Math.abs(Number(transaction.amount)), 0);
 
   const recentTransactions = [...userTransactions]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
@@ -198,7 +206,10 @@ const getTransactionSummary = (req, res) => {
   const byCategory = Object.entries(
     userTransactions.reduce((acc, transaction) => {
       const key = transaction.category || 'Other';
-      acc[key] = (acc[key] || 0) + Number(transaction.amount);
+      const signedAmount = (transaction.type || (transaction.amount >= 0 ? 'income' : 'expense')) === 'expense'
+        ? -Math.abs(Number(transaction.amount))
+        : Math.abs(Number(transaction.amount));
+      acc[key] = (acc[key] || 0) + signedAmount;
       return acc;
     }, {})
   ).map(([categoryName, total]) => ({
@@ -258,8 +269,10 @@ const getTransactionReport = (req, res) => {
       acc[period] = { incomeTotal: 0, expenseTotal: 0, balance: 0 };
     }
 
-    if (transaction.amount > 0) {
-      acc[period].incomeTotal += Number(transaction.amount);
+    const transactionType = transaction.type || (transaction.amount >= 0 ? 'income' : 'expense');
+
+    if (transactionType === 'income') {
+      acc[period].incomeTotal += Math.abs(Number(transaction.amount));
     } else {
       acc[period].expenseTotal += Math.abs(Number(transaction.amount));
     }

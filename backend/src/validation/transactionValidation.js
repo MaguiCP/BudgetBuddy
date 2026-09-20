@@ -10,10 +10,24 @@ const transactionSchema = Joi.object({
       'any.required': 'Description is required.',
     }),
   amount: Joi.number()
+    .custom((value, helpers) => {
+      if (value === 0) {
+        return helpers.error('number.positive');
+      }
+
+      return value;
+    })
     .required()
     .messages({
       'number.base': 'Amount must be a number.',
+      'number.positive': 'Amount cannot be zero.',
       'any.required': 'Amount is required.',
+    }),
+  type: Joi.string()
+    .valid('income', 'expense')
+    .optional()
+    .messages({
+      'any.only': 'Type must be either income or expense.',
     }),
   category: Joi.string()
     .min(2)

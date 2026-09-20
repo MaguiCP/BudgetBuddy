@@ -5,6 +5,7 @@ import {
   getAllUsersService,
   updateUserDetails as updateUserService,
   deleteUserById,
+  updateOwnProfile,
 } from '../services/userService.js';
 
 const registerUser = async (req, res) => {
@@ -12,7 +13,8 @@ const registerUser = async (req, res) => {
     const user = await registerUserService(req.body);
     return res.status(201).json({ message: 'User registered successfully!', user });
   } catch (error) {
-    return res.status(400).json({ error: error.message });
+    const status = error.message === 'Username already exists.' ? 409 : 400;
+    return res.status(status).json({ error: error.message });
   }
 };
 
@@ -65,4 +67,24 @@ const getUser = async (req, res) => {
   }
 };
 
-export { registerUser, loginUser, updateUserDetails, getAllUsers, deleteUser, getUser };
+const getOwnProfile = async (req, res) => {
+  try {
+    const user = await getUserById({ id: req.user.id });
+    return res.status(200).json({ user });
+  } catch (error) {
+    const status = error.message === 'User not found.' ? 404 : 400;
+    return res.status(status).json({ error: error.message });
+  }
+};
+
+const updateOwnProfileController = async (req, res) => {
+  try {
+    const result = await updateOwnProfile(req.user.id, req.body);
+    return res.status(200).json({ message: 'Profile updated successfully!', ...result });
+  } catch (error) {
+    const status = error.message === 'User not found.' ? 404 : error.message === 'Username already exists.' ? 409 : 400;
+    return res.status(status).json({ error: error.message });
+  }
+};
+
+export { registerUser, loginUser, updateUserDetails, getAllUsers, deleteUser, getUser, getOwnProfile, updateOwnProfileController };
