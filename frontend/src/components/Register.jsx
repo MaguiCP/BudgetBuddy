@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api';
+import api, { getApiErrorMessage } from '../services/api';
 import '../styles/register.css';
 
 function Register() {
@@ -22,7 +22,7 @@ function Register() {
 
       navigate('/login');
     } catch (err) {
-      setError(err.response?.data?.error || 'An unexpected error occurred.');
+      setError(getApiErrorMessage(err, 'Não foi possível criar a conta. Verifica os dados e tenta novamente.'));
     }
   };
 

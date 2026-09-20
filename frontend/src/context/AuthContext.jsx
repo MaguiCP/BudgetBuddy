@@ -14,6 +14,28 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('token');
   }, [token]);
 
+  useEffect(() => {
+    if (!token) {
+      return undefined;
+    }
+
+    try {
+      const payload = JSON.parse(window.atob(token.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')));
+      const expiresInMs = payload.exp * 1000 - Date.now();
+
+      if (expiresInMs <= 0) {
+        setToken('');
+        return undefined;
+      }
+
+      const timeoutId = window.setTimeout(() => setToken(''), expiresInMs);
+      return () => window.clearTimeout(timeoutId);
+    } catch {
+      setToken('');
+      return undefined;
+    }
+  }, [token]);
+
   const value = useMemo(() => ({ token, setToken }), [token]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
