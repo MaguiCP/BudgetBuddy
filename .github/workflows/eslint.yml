@@ -44,6 +44,10 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
+        run: npx eslint .
+
+      - name: Generate ESLint SARIF
+        if: always()
         run: |
           npx eslint . \
             --format @microsoft/eslint-formatter-sarif \
@@ -86,6 +90,10 @@ jobs:
         run: npm ci
 
       - name: Run ESLint
+        run: npx eslint .
+
+      - name: Generate ESLint SARIF
+        if: always()
         run: |
           npx eslint . \
             --format @microsoft/eslint-formatter-sarif \

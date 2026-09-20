@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { test, expect } from 'vitest';
+import { beforeEach, test, expect, vi } from 'vitest';
 
 import App from './App';
 
@@ -15,6 +15,9 @@ test('renders the BudgetBuddy app shell and authenticated nav', () => {
   expect(screen.getAllByText(/Transactions/i).length).toBeGreaterThan(0);
   expect(screen.getAllByText(/Categories/i).length).toBeGreaterThan(0);
   expect(screen.getByText(/Log out/i)).toBeInTheDocument();
+
+  // Wait for DashboardPage's asynchronous effects/state updates.
+  await screen.findByText(/Total Income|Income/i);
 
   window.localStorage.clear();
 });

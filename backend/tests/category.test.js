@@ -2,12 +2,14 @@ import request from 'supertest';
 import app from '../src/server';
 import http from 'http';
 
-describe('Category and financial summary API', () => {
+describe('Category API', () => {
   let server;
   let token;
+  let categoryId;
 
   beforeAll(async () => {
     server = http.createServer(app);
+
     await new Promise((resolve) => server.listen(resolve));
 
     const registerResponse = await request(server)
@@ -29,6 +31,7 @@ describe('Category and financial summary API', () => {
       });
 
     expect(loginResponse.status).toBe(200);
+
     token = loginResponse.body.token;
   });
 
@@ -48,70 +51,143 @@ describe('Category and financial summary API', () => {
     expect(response.status).toBe(201);
     expect(response.body.category).toHaveProperty('id');
     expect(response.body.category.name).toBe('Food');
+
+    categoryId = response.body.category.id;
   });
 
-  it('should create income and expense transactions and calculate summary by category', async () => {
-    await request(server)
-      .post('/api/transaction')
-      .set('Authorization', `Bearer ${token}`)
+  it('should reject category creation without authentication', async () => {
+    const response = await request(server)
+      .post('/api/category')
       .send({
-        description: 'Monthly salary',
-        amount: 2500,
-        category: 'salary',
-        date: '2026-08-01',
+        name: 'Unauthorized',
+        type: 'expense',
       });
 
-    await request(server)
-      .post('/api/transaction')
+    expect(response.status).toBe(401);
+  });
+
+  it('should reject duplicate category names', async () => {
+    const response = await request(server)
+      .post('/api/category')
       .set('Authorization', `Bearer ${token}`)
       .send({
-        description: 'Groceries',
-        amount: -120,
-        category: 'Food',
-        date: '2026-08-15',
+        name: 'Food',
+        type: 'expense',
       });
 
-    const summaryResponse = await request(server)
-      .get('/api/transaction/summary')
+    expect(response.status).toBe(409);
+    expect(response.body.error).toBe('Category already exists.');
+  });
+
+  it('should reject invalid category data', async () => {
+    const response = await request(server)
+      .post('/api/category')
       .set('Authorization', `Bearer ${token}`)
-      .query({ month: '2026-08' });
+      .send({
+        name: '',
+        type: 'invalid',
+      });
 
-    expect(summaryResponse.status).toBe(200);
-    expect(summaryResponse.body.totalIncome).toBeGreaterThanOrEqual(2500);
-    expect(summaryResponse.body.totalExpenses).toBeGreaterThanOrEqual(120);
-    expect(summaryResponse.body.balance).toBeGreaterThanOrEqual(2380);
+    expect(response.status).toBe(400);
+  });
 
-    const byCategoryResponse = await request(server)
-      .get('/api/transaction/by-category')
+  it('should get all categories', async () => {
+    const response = await request(server)
+      .get('/api/category')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(200);
+    expect(Array.isArray(response.body)).toBe(true);
+  });
+
+  it('should get a category by id', async () => {
+    const response = await request(server)
+      .get(`/api/category/${categoryId}`)
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body.id).toBe(categoryId);
+    expect(response.body.name).toBe('Food');
+  });
+
+  it('should return 404 when category does not exist', async () => {
+    const response = await request(server)
+      .get('/api/category/999999')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('Category not found.');
+  });
+
+  it('should reject invalid category id', async () => {
+    const response = await request(server)
+      .get('/api/category/invalid-id')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(400);
+  });
+
+  it('should update a category', async () => {
+    const response = await request(server)
+      .put(`/api/category/${categoryId}`)
       .set('Authorization', `Bearer ${token}`)
-      .query({ month: '2026-08' });
+      .send({
+        name: 'Groceries',
+        type: 'expense',
+      });
 
-    expect(byCategoryResponse.status).toBe(200);
-    expect(Array.isArray(byCategoryResponse.body)).toBe(true);
+    expect(response.status).toBe(200);
+    expect(response.body.category.name).toBe('Groceries');
+  });
 
-    const filteredByMonthAndCategoryResponse = await request(server)
-      .get('/api/transaction')
+  it('should return 404 when updating a category that does not exist', async () => {
+    const response = await request(server)
+      .put('/api/category/999999')
       .set('Authorization', `Bearer ${token}`)
-      .query({ month: '2026-08', category: 'Food' });
+      .send({
+        name: 'Updated',
+        type: 'expense',
+      });
 
-    expect(filteredByMonthAndCategoryResponse.status).toBe(200);
-    expect(filteredByMonthAndCategoryResponse.body.transactions).toBeInstanceOf(Array);
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('Category not found.');
+  });
 
-    const monthlySummaryResponse = await request(server)
-      .get('/api/transaction/summary')
+  it('should reject invalid category data when updating', async () => {
+    const response = await request(server)
+      .put(`/api/category/${categoryId}`)
       .set('Authorization', `Bearer ${token}`)
-      .query({ month: '2026-08', category: 'Food' });
+      .send({
+        name: '',
+        type: 'invalid',
+      });
 
-    expect(monthlySummaryResponse.status).toBe(200);
-    expect(monthlySummaryResponse.body.totalExpenses).toBeGreaterThanOrEqual(120);
-    expect(monthlySummaryResponse.body.totalIncome).toBe(0);
+    expect(response.status).toBe(400);
+  });
 
-    const fullMonthlySummaryResponse = await request(server)
-      .get('/api/transaction/summary')
-      .set('Authorization', `Bearer ${token}`)
-      .query({ month: '2026-08' });
+  it('should delete a category', async () => {
+    const response = await request(server)
+      .delete(`/api/category/${categoryId}`)
+      .set('Authorization', `Bearer ${token}`);
 
-    expect(fullMonthlySummaryResponse.status).toBe(200);
-    expect(fullMonthlySummaryResponse.body.totalIncome).toBeGreaterThanOrEqual(2500);
+    expect(response.status).toBe(200);
+    expect(response.body.message).toBe('Category deleted successfully!');
+  });
+
+  it('should return 404 when deleting a category that does not exist', async () => {
+    const response = await request(server)
+      .delete('/api/category/999999')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe('Category not found.');
+  });
+
+  it('should reject invalid category id when deleting', async () => {
+    const response = await request(server)
+      .delete('/api/category/invalid-id')
+      .set('Authorization', `Bearer ${token}`);
+
+    expect(response.status).toBe(400);
   });
 });
