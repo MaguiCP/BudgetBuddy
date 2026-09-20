@@ -61,6 +61,23 @@ const userIdSchema = Joi.object({
     }),
 });
 
+const userProfileSchema = Joi.object({
+  username: Joi.string().alphanum().min(3).max(30).required().messages({
+    'string.alphanum': 'Username must contain only alphanumeric characters.',
+    'string.min': 'Username must be at least 3 characters long.',
+    'string.max': 'Username must be at most 30 characters long.',
+    'any.required': 'Username is required.',
+  }),
+  email: Joi.string().email().required().messages({
+    'string.email': 'Email must be a valid email address.',
+    'any.required': 'Email is required.',
+  }),
+  currentPassword: Joi.string().optional(),
+  password: Joi.string().min(8).optional().messages({
+    'string.min': 'Password must be at least 8 characters long.',
+  }),
+}).with('password', 'currentPassword');
+
 export const validateUserRegistration = async (data) => {
   return await userRegistrationSchema.validateAsync(data);
 };
@@ -71,4 +88,8 @@ export const validateUserLogin = async (data) => {
 
 export const validateUserId = async (data) => {
   return await userIdSchema.validateAsync(data);
+};
+
+export const validateUserProfile = async (data) => {
+  return await userProfileSchema.validateAsync(data);
 };

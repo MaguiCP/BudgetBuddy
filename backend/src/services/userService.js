@@ -11,7 +11,7 @@ import {
   getUsers,
   updateUser,
 } from '../repositories/userRepository.js';
-import { validateUserLogin, validateUserRegistration, validateUserId } from '../validation/userValidation.js';
+import { validateUserLogin, validateUserRegistration, validateUserId, validateUserProfile } from '../validation/userValidation.js';
 
 const sanitizeUser = (user) => {
   if (!user) {
@@ -96,6 +96,48 @@ export const updateUserDetails = async (idData, payload) => {
   }
 
   return sanitizeUser(user);
+};
+
+export const updateOwnProfile = async (userId, payload) => {
+  const validated = await validateUserProfile(payload);
+  const existingUser = findUserById(userId);
+
+  if (!existingUser) {
+    throw new Error('User not found.');
+  }
+
+  const usernameChanged = validated.username.toLowerCase() !== existingUser.username.toLowerCase();
+  const existingUsername = findUserByUsername(validated.username);
+
+  if (usernameChanged && existingUsername && existingUsername.id !== userId) {
+    throw new Error('Username already exists.');
+  }
+
+  if (validated.password) {
+    const passwordMatches = await bcrypt.compare(validated.currentPassword, existingUser.password);
+    if (!passwordMatches) {
+      throw new Error('Current password is incorrect.');
+    }
+  }
+
+  const updatedUser = {
+    ...existingUser,
+    username: validated.username,
+    email: validated.email,
+  };
+
+  if (validated.password) {
+    updatedUser.password = await bcrypt.hash(validated.password, 10);
+  }
+
+  const user = updateUser(userId, updatedUser);
+  const token = jwt.sign(
+    { id: user.id, username: user.username, role: user.role },
+    getJwtSecret(),
+    { expiresIn: '1h' }
+  );
+
+  return { user: sanitizeUser(user), token };
 };
 
 export const deleteUserById = async (idData) => {

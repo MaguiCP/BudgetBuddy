@@ -6,6 +6,9 @@ import cors from 'cors';  // Importando o CORS
 import userRoutes from './routes/userRoutes.js';
 import transactionRoutes from './routes/transactionRoutes.js';
 import categoryRoutes from './routes/categoryRoutes.js';
+import budgetRoutes from './routes/budgetRoutes.js';
+import savingsGoalRoutes from './routes/savingsGoalRoutes.js';
+import recurringTransactionRoutes from './routes/recurringTransactionRoutes.js';
 import rateLimit from 'express-rate-limit';
 
 dotenv.config();
@@ -19,7 +22,7 @@ const defaultLimiter = rateLimit({
 });
 
 // Configuração CORS
-app.use(cors({ origin: 'http://localhost:3000' }));
+app.use(cors({ origin: 'http://localhost:5173' }));
 
 app.use(bodyParser.json());
 
@@ -30,6 +33,9 @@ app.use(defaultLimiter);
 app.use('/api/user', userRoutes);
 app.use('/api/category', categoryRoutes);
 app.use('/api/transaction', transactionRoutes);
+app.use('/api/budget', budgetRoutes);
+app.use('/api/savings-goal', savingsGoalRoutes);
+app.use('/api/recurring-transaction', recurringTransactionRoutes);
 
 // Frontend
 app.use(express.static(frontendBuildPath));

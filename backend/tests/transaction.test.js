@@ -85,6 +85,35 @@ describe('Transaction API', () => {
     expect(response.body.transaction.description).toBe(transactionData.description);
   });
 
+  it('should normalize the amount according to the explicit transaction type', async () => {
+    const expenseResponse = await request(server)
+      .post('/api/transaction')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        description: 'Transport',
+        amount: 25,
+        type: 'expense',
+        category: 'transport',
+      });
+
+    const incomeResponse = await request(server)
+      .post('/api/transaction')
+      .set('Authorization', `Bearer ${token}`)
+      .send({
+        description: 'Refund',
+        amount: 25,
+        type: 'income',
+        category: 'refund',
+      });
+
+    expect(expenseResponse.status).toBe(201);
+    expect(expenseResponse.body.transaction.amount).toBe(-25);
+    expect(expenseResponse.body.transaction.type).toBe('expense');
+    expect(incomeResponse.status).toBe(201);
+    expect(incomeResponse.body.transaction.amount).toBe(25);
+    expect(incomeResponse.body.transaction.type).toBe('income');
+  });
+
   it('should delete a transaction', async () => {
 
     const response = await request(server)
